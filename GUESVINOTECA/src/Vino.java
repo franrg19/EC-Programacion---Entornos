@@ -6,7 +6,7 @@ public class Vino {
     private int stock;
 
     //Constructor
-    public Vino(double precio, String tipo, String nombre,int stock) {
+    public Vino(String nombre,String tipo,double precio,int stock) {
         this.precio = precio;
         this.tipo = tipo;
         this.nombre = nombre;
