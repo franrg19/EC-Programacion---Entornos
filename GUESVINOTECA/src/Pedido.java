@@ -10,7 +10,7 @@ public class Pedido {
     private double totalVenta;
 
     //Constructor
-    public Pedido(Cliente cliente,LocalDate fecha) {
+    public Pedido(Cliente cliente) {
         this.cliente = cliente;
         this.lineasDeVenta = new ArrayList<>();
         this.fecha=fecha;

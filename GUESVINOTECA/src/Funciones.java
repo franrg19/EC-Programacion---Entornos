@@ -23,6 +23,7 @@ public class Funciones {
             System.out.println(vino);
         }
     }
+
     // MENU PRINCIPAL
     public static void menuPrincipal (){
         System.out.println("--- MENU PRINCIPAL DE LA APP ---");
@@ -192,19 +193,39 @@ public class Funciones {
         }while (opcion !=5);
     }
 
-    public static void altaProducto (){
+    public static void altaProducto () {
         System.out.println("\n-- ALTA DE VINO--");
         System.out.println("ingrese el nombre del vino");
         String nombre = sc.nextLine();
         System.out.println("Ingresa el tipo de vino (blanco,tinto,rosado,espumoso");
         String tipo = sc.nextLine();
         System.out.println("Ingresa el precio");
-        double precio = sc.nextDouble();
+        double precio = 0;
+        try {
+            precio = sc.nextDouble();
+            sc.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println("Por favor introduce un numero");
+        }
         System.out.println("Ingresa la cantidad");
-        int cantidad = sc.nextInt();
+        int cantidad = 0;
+        try {
+            cantidad = sc.nextInt();
+            sc.nextLine();
+        }catch (InputMismatchException e){
+            System.out.println("Por favor introduce un numero");
+            sc.nextLine();
+        }
 
-        GestorTiendaVinos.vinos.add(new Vino(nombre,tipo,precio,cantidad));
+        GestorTiendaVinos.vinos.add(new Vino(nombre, tipo, precio, cantidad));
         System.out.println("¡Producto añadido con éxito");
+    }
+
+
+    public static  void listadoProducto (){
+        for (int i = 0; i < GestorTiendaVinos.vinos.size(); i++) {
+            System.out.println((i+1) + "." + GestorTiendaVinos.vinos.get(i));
+        }
     }
 
     public static void bajaProducto (){
@@ -213,7 +234,16 @@ public class Funciones {
             System.out.println("No hay vino para eliminar");
             return;
         }
+        listadoProducto();
         System.out.println("Ingresa el nombre exacto del vino a dar de baja");
+        String nombreVino = sc.nextLine();
+        Vino vinoaborrar=buscarVinoPorNombreExacto(nombreVino);
+        if (vinoaborrar !=null){
+            GestorTiendaVinos.vinos.remove(vinoaborrar);
+            System.out.println("Vino borrado correctamente");
+        }else {
+            System.out.println("Error vino no encontrado con el nombre: " + nombreVino);
+        }
 
 
     }
@@ -224,6 +254,190 @@ public class Funciones {
                 return vino;
             };
         }return null;
+    }
+
+    public static void busquedaProducto (){
+        if (GestorTiendaVinos.vinos.isEmpty()){
+            System.out.println("No hay vinos para mostrar");
+            return;
+        }
+        System.out.println("introduce texto de busqueda (nombre o tipo");
+        String busqueda = sc.nextLine().toLowerCase();
+        boolean encontrado = false;
+        for (Vino vino : GestorTiendaVinos.vinos){
+            if (vino.getNombre().toLowerCase().contains(busqueda) || vino.getTipo().toLowerCase().contains(busqueda)){
+                System.out.println(vino);
+                encontrado=true;
+            }
+        }
+        if (!encontrado){
+            System.out.println("no se encontraron vinos con el criterio de busqueda");
+        }
+    }
+
+    public static void modificarPrecioProducto (){
+        System.out.println("\n MODIFICAR PRECIO VINO");
+        if (GestorTiendaVinos.vinos.isEmpty()){
+            System.out.println("La lista de vino esta vacia, añade primero un vino");
+            return;
+        }
+        listadoProducto();
+
+        System.out.println("Escribe el nombre del vino para cambiar el precio");
+        String nombreVino = sc.nextLine();
+
+        Vino vinoAModificar = buscarVinoPorNombreExacto(nombreVino);
+        if (vinoAModificar == null){
+            System.out.println("Este vino no existe");
+            return;
+        }
+        System.out.println("Precio del vino actual: " + vinoAModificar.getPrecio() + "€");
+        System.out.println("Escribe el nuevo precio o -1 para cancelar");
+
+        try {
+            String iputTeclado = sc.nextLine();
+            double nuevoPrecio = Double.parseDouble(iputTeclado);
+            sc.nextLine();
+
+            if (nuevoPrecio == -1){
+                System.out.println("Precio no modificado");
+            }else if (nuevoPrecio < 0){
+                System.out.println("El precio no puede ser negativo. No se ha realizado ningun cambio");
+            }else{
+                vinoAModificar.setPrecio(nuevoPrecio);
+                System.out.println("Precio del vino " + vinoAModificar.getNombre() + "actualizado a: "  + nuevoPrecio + "€");
+            }
+        }catch (NumberFormatException e){
+            System.out.println("Error el precio tiene que ser un valor numerico.");
+        }
+    }
+
+    //GESTION DE VENTAS
+
+    public static void gestionPedidos (){
+        int opcion = -1;
+
+        do {
+            System.out.println("\n ---GESTION DE LOS PEDIDOS---");
+            System.out.println("1. Realizar una venta");
+            System.out.println("2. Mostrar ventas realizadas");
+            System.out.println("3. Mostrar ventas por cliente");
+            System.out.println("4. Mostrar importe total de cada venta");
+            System.out.println("5. Salir");
+            opcion=obtenerOpcionMenu();
+
+            switch (opcion){
+                case 1: realizarVenta ();break;
+                case 2: mostrarVentas ();break;
+                case 3: mostrarVentasCliente ();break;
+                case 4: mostrarImporteVentas ();break;
+                case 5: return;
+                default:
+                    System.out.println("Opcion no valida, intentelo de nuevo");
+            }
+        }while (opcion!=5);
+    }
+
+    public static void realizarVenta () {
+        System.out.println("\n--REALIZAR UNA VENTA--");
+        if (GestorTiendaVinos.vinos.isEmpty() || GestorTiendaVinos.clientes.isEmpty()){
+            System.out.println("No hay clientes o vinos para poder realizar una venta");
+
+            System.out.println("Selecciona un cliente para realizar una venta");
+            listarClientes();
+            System.out.println("Ingrese DNI del cliente");
+            String dniCliente = sc.nextLine();
+            Cliente clienteSeleccionado =buscarCliente(dniCliente);
+
+            if (clienteSeleccionado == null){
+                System.out.println("Error venta cancelada");
+                return;
+            }
+
+            Pedido nuevoPedido = new Pedido(clienteSeleccionado);
+
+            while (true){
+                listadoProducto();
+                System.out.println("Elige el numero de vino (0 para terminar): ");
+                int opcionVino = obtenerOpcionMenu();
+
+                if (opcionVino == 0)break;
+
+                if (opcionVino < 1 || opcionVino > GestorTiendaVinos.vinos.size()){
+                    System.out.println("Numero de vino no valido");
+                    continue;
+                }
+                Vino vinoSeleccionado =GestorTiendaVinos.vinos.get(opcionVino-1);
+                System.out.println("Cantidad (stock: " + vinoSeleccionado.getStock() + "): ");
+                int cantidad = -1;
+
+                try {
+                    cantidad =sc.nextInt();
+                    if (cantidad < 0){
+                        System.out.println("la cantidad no puede ser negativa");
+                    }
+                }catch (InputMismatchException e){
+                    System.out.println("Error: Por favor ingrese un numero entero para la cantidad");
+                }finally {
+                    sc.nextLine();
+                }
+                if (cantidad > 0){
+                    if (vinoSeleccionado.getStock() >= cantidad){
+                        nuevoPedido.añadirProducto(vinoSeleccionado,cantidad);
+                        vinoSeleccionado.decrementarStock(cantidad);
+                        System.out.println(cantidad + "de" + vinoSeleccionado.getNombre() + "añadido a la venta");
+                    }else {
+                        System.out.println("Stock insuficiente para: " + vinoSeleccionado.getNombre() + "solo quedan" + vinoSeleccionado.getStock() + "unidades");
+                    }
+                }if (nuevoPedido.getLineasDeVenta().isEmpty()){
+                    System.out.println("Venta cancelada no se añadieron vinos");
+                }else {
+                    GestorTiendaVinos.pedidos.add(nuevoPedido);
+                    System.out.println("Venta realizada con exito");
+                }
+            }
+
+        }
+    }
+
+    public static void mostrarVentas (){
+        System.out.println("\n --TODAS LAS VENTAS REALIZADAS--");
+
+        if (GestorTiendaVinos.pedidos.isEmpty()){
+            System.out.println("No se ha realizado ningun pedido");
+            return;
+        }
+        for (Pedido p : GestorTiendaVinos.pedidos){
+            System.out.println(p);
+            System.out.println("_x_x_x_x_x_x_x");
+        }
+    }
+
+    public static void mostrarVentasCliente (){
+        System.out.println("\n--VENTAS POR CLIENTE--");
+        if (GestorTiendaVinos.clientes.isEmpty()){
+            System.out.println("No hay clientes registrados");
+            return;
+        }
+        if (GestorTiendaVinos.pedidos.isEmpty()){
+            System.out.println("No hay pedidos registrados");
+            return;
+        }
+
+        listarClientes();
+        System.out.println("ingrese el Dni del cliente para buscar");
+        String dni = sc.nextLine();
+        Cliente clienteABuscar =buscarCliente(dni);
+
+        if (clienteABuscar != null){
+            boolean tieneVentas = false;
+            System.out.println("\n Ventas de. " + clienteABuscar.getNombre());
+            for (Pedido pe : GestorTiendaVinos.pedidos){
+                
+            }
+        }
+
+
     }
 
 }

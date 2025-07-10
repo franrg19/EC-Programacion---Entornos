@@ -8,7 +8,7 @@ public class GestorTiendaVinos {
     static ArrayList <Pedido> pedidos = new ArrayList<>();
 
     public static void main(String[] args) {
-        Funciones.precargarDatos();
+        //Funciones.precargarDatos(); // Descomentar para realizar la precarga de datos
         Scanner sc =new Scanner(System.in);
         int opcion;
         do {
@@ -25,7 +25,7 @@ public class GestorTiendaVinos {
                 break;
                 case 2: Funciones.gestionVinos ();
                 break;
-                case 3: Funciones.gestionPedidos ();
+               case 3: Funciones.gestionPedidos ();
                 break;
                 case 4:
                     System.out.println("Saliendo de la aplicación. ¡ Hasta pronto ! ");
