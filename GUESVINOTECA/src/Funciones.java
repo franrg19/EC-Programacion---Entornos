@@ -18,7 +18,7 @@ public class Funciones {
         for (Cliente cliente: GestorTiendaVinos.clientes){
             System.out.println(cliente);
         }
-        System.out.println("--- Lista de vinos ___");
+        System.out.println("--- Lista de vinos ---");
         for (Vino vino: GestorTiendaVinos.vinos){
             System.out.println(vino);
         }
@@ -84,7 +84,7 @@ public class Funciones {
         System.out.println("Ingrese el email: ");
         String email =sc.nextLine();
 
-        GestorTiendaVinos.clientes.add(new Cliente(nombre,telefono,email,dni));
+        GestorTiendaVinos.clientes.add(new Cliente(nombre,email,telefono,dni));
         System.out.println("¡ Cliente añadido con exito !");
     }
 
@@ -113,6 +113,7 @@ public class Funciones {
             System.out.println("Error: Cliente no encontrado con DNI: " + dni);
         }
     }
+
     public static void modificarCliente (){
         if (GestorTiendaVinos.clientes.isEmpty()){
             System.out.println("No hay clientes para modificar");
@@ -123,18 +124,22 @@ public class Funciones {
         String dni =sc.nextLine();
         Cliente clienteAModificar = buscarCliente(dni);
         if (clienteAModificar != null){
-
             System.out.println("Deja en blanco si no quiere cambiar el valor");
 
-            System.out.println("ingrese el nuevo nombre");
+            System.out.println("ingrese el nuevo nombre (actual: " + clienteAModificar.getNombre() + "):");
             String nuevoNombre= sc.nextLine();
-            clienteAModificar.setNombre(nuevoNombre);
+            if (!nuevoNombre.trim().isEmpty()){
+                clienteAModificar.setNombre(nuevoNombre);
+            }
 
-            System.out.println("Introduce el nuevo telefono");
+            System.out.println("Introduce el nuevo telefono (actual: " + clienteAModificar.getTelefono() + ")");
             String nuevoTelefono =sc.nextLine();
-            clienteAModificar.setTelefono(nuevoTelefono);
+            if (!nuevoTelefono.trim().isEmpty()){
+                clienteAModificar.setTelefono(nuevoTelefono);
+            }
 
-            System.out.println("Introduce el nuevo email: ");
+
+            System.out.println("Introduce el nuevo email (actual: " + clienteAModificar.getEmail());
             String nuevoEmail=sc.nextLine();
             clienteAModificar.setEmail(nuevoEmail);
             System.out.println("Cliente modificado exitosamente.");
@@ -155,7 +160,7 @@ public class Funciones {
         String dni = sc.nextLine();
         Cliente clienteEncontrado = buscarCliente(dni);
         if (clienteEncontrado !=null){
-            System.out.println("Cliente encontrado" + clienteEncontrado);
+            System.out.println("Cliente encontrado " + clienteEncontrado);
         }else {
             System.out.println("Cliente no encontrado con DNI " + dni);
         }
@@ -184,8 +189,9 @@ public class Funciones {
             System.out.println("2. Baja Producto");
             System.out.println("3. Busqueda por tipo");
             System.out.println("4. Modificación de precio");
-            System.out.println("5. Listado de productos");
-            System.out.println("6. Volver al menu principal");
+            System.out.println("5. Modificación de Stock");
+            System.out.println("6. Listado de productos");
+            System.out.println("7. Volver al menu principal");
             System.out.println("-- Elige una opción valida");
             opcion=obtenerOpcionMenu();
 
@@ -194,10 +200,11 @@ public class Funciones {
                 case 2: bajaProducto ();break;
                 case 3: busquedaProducto ();break;
                 case 4: modificarPrecioProducto ();break;
-                case 5: listadoProducto ();break;
-                case 6: menuPrincipal();break;
+                case 5: modificarStockProducto ();break;
+                case 6: listadoProducto ();break;
+                case 7: ;break;
             }
-        }while (opcion !=6);
+        }while (opcion !=7);
     }
 
     public static void altaProducto () {
@@ -233,10 +240,13 @@ public class Funciones {
 
 
     public static  void listadoProducto (){
+        if (GestorTiendaVinos.vinos.isEmpty()){
+            System.out.println("Error, no hay ningun vino para mostrar");
+            return;
+        }
+        System.out.println("---Listado de vinos disponibles---");
         for (int i = 0; i < GestorTiendaVinos.vinos.size(); i++) {
-            System.out.println((i+1) + "." + GestorTiendaVinos.vinos.get(i));
-        }if (GestorTiendaVinos.vinos.isEmpty()){
-            System.out.println("Error no hay ningun vino para mostrar");
+            System.out.println((i+1) + ". " + GestorTiendaVinos.vinos.get(i));
         }
     }
 
@@ -325,6 +335,43 @@ public class Funciones {
         }
     }
 
+    public static void modificarStockProducto () {
+        System.out.println("\n MODIFICAR STOCK PRODUCTO");
+        if (GestorTiendaVinos.vinos.isEmpty()){
+            System.out.println("Error, no hay producto para modificar");
+            return;
+        }
+
+        listadoProducto();
+        System.out.println("Escribe el nombre del vino que quieres modificar el stock");
+        String nombreVino =sc.nextLine();
+
+        Vino vinoAModificarStock = buscarVinoPorNombreExacto(nombreVino);
+        if (vinoAModificarStock == null){
+            System.out.println("El nombre del vino no existe, prueba otra vez.");
+            return;
+        }
+
+        System.out.println("Stock del vino actual " + vinoAModificarStock.getStock() + " Unidades.");
+        System.out.println("Introduce el nuevo stock  o -1 para cancelar");
+
+        try {
+            int inputNuevaCantidad = sc.nextInt();
+
+            if (inputNuevaCantidad == -1){
+                System.out.println("Stock no modificado");
+            } else if (inputNuevaCantidad < 0) {
+                System.out.println("La cantidad no puede ser negativa");
+            }else {
+                vinoAModificarStock.setStock(inputNuevaCantidad);
+                System.out.println("Stock del vino " + vinoAModificarStock.getNombre() + " actualizado a: " + inputNuevaCantidad + " unidades." );
+            }
+        }catch (InputMismatchException e){
+            System.out.println("Tienes que introducir un valor numerico.");
+        }
+
+    }
+
     //GESTION DE VENTAS
 
     public static void gestionPedidos (){
@@ -359,6 +406,7 @@ public class Funciones {
         }
         if (GestorTiendaVinos.vinos.isEmpty()){
             System.out.println("Error, no hay vinos registrados para vender");
+            return;
         }
 
             System.out.println("Selecciona un cliente para realizar una venta");
@@ -403,17 +451,17 @@ public class Funciones {
                     if (vinoSeleccionado.getStock() >= cantidad){
                         nuevoPedido.añadirProducto(vinoSeleccionado,cantidad);
                         vinoSeleccionado.decrementarStock(cantidad);
-                        System.out.println(cantidad + "de" + vinoSeleccionado.getNombre() + "añadido a la venta");
+                        System.out.println(cantidad + " de " + vinoSeleccionado.getNombre() + " añadido a la venta");
                     }else {
-                        System.out.println("Stock insuficiente para: " + vinoSeleccionado.getNombre() + "solo quedan" + vinoSeleccionado.getStock() + "unidades");
+                        System.out.println("Stock insuficiente para: " + vinoSeleccionado.getNombre() + " solo quedan " + vinoSeleccionado.getStock() + " unidades");
                     }
-                }if (nuevoPedido.getLineasDeVenta().isEmpty()){
-                    System.out.println("Venta cancelada no se añadieron vinos");
-                }else {
-                    GestorTiendaVinos.pedidos.add(nuevoPedido);
-                    System.out.println("Venta realizada con exito");
                 }
-            }
+            }if (nuevoPedido.getLineasDeVenta().isEmpty()){
+            System.out.println("Venta cancelada no se añadieron vinos");
+        }else {
+            GestorTiendaVinos.pedidos.add(nuevoPedido);
+            System.out.println("Venta realizada con exito");
+        }
 
 
     }

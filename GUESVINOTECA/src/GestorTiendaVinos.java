@@ -8,7 +8,7 @@ public class GestorTiendaVinos {
     static ArrayList <Pedido> pedidos = new ArrayList<>();
 
     public static void main(String[] args) {
-        //Funciones.precargarDatos(); // Descomentar para realizar la precarga de datos
+        Funciones.precargarDatos(); // Descomentar para realizar la precarga de datos
 
         Scanner sc =new Scanner(System.in);
         int opcion;
@@ -33,6 +33,7 @@ public class GestorTiendaVinos {
 
             }
         }while(opcion!=4);
+        sc.close();
 
         }
     }
