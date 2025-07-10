@@ -19,7 +19,7 @@ public class Pedido {
 
 
 
-    //Metodo para añadir vino
+    //Metodo para añadir vinos
     public void añadirProducto(Vino vino, int cantidad){
         this.lineasDeVenta.add(vino);
         this.totalVenta += vino.getPrecio() * cantidad;
