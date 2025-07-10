@@ -9,6 +9,7 @@ public class GestorTiendaVinos {
 
     public static void main(String[] args) {
         //Funciones.precargarDatos(); // Descomentar para realizar la precarga de datos
+
         Scanner sc =new Scanner(System.in);
         int opcion;
         do {

@@ -13,9 +13,12 @@ public class Pedido {
     public Pedido(Cliente cliente) {
         this.cliente = cliente;
         this.lineasDeVenta = new ArrayList<>();
-        this.fecha=fecha;
+        this.fecha=LocalDate.now();
         this.totalVenta = 0.0;
     }
+
+
+
     //Metodo para añadir vino
     public void añadirProducto(Vino vino, int cantidad){
         this.lineasDeVenta.add(vino);

@@ -41,6 +41,7 @@ public class Funciones {
             opcion=sc.nextInt();
         }catch (InputMismatchException error){
             System.out.println("⚠️ Error de entrada, por favor ingrese un numero para seleccionar una opción");
+        }finally {
             sc.nextLine();
         }return opcion;
     }
@@ -73,6 +74,7 @@ public class Funciones {
 
     public static void altaCliente (){
         System.out.println("\n --ALTA DE CLIENTE--");
+
         System.out.println("Ingrese el nombre: ");
         String nombre =sc.nextLine();
         System.out.println("Ingrese el DNI: ");
@@ -96,6 +98,7 @@ public class Funciones {
 
     public static void bajaCliente (){
         System.out.println("\n --BAJA DE CLIENTE--");
+
         if (GestorTiendaVinos.clientes.isEmpty()){
             System.out.println("No hay clientes para dar de baja");
             return;
@@ -115,6 +118,7 @@ public class Funciones {
             System.out.println("No hay clientes para modificar");
             return;
         }
+
         System.out.println("ingrese el dni del cliente a modificar.");
         String dni =sc.nextLine();
         Cliente clienteAModificar = buscarCliente(dni);
@@ -142,6 +146,7 @@ public class Funciones {
 
     public static void buscarClientePorDni (){
         System.out.println("\n --BUSQUEDA DE CLIENTE POR DNI--");
+
         if (GestorTiendaVinos.clientes.isEmpty()){
             System.out.println("No hay clientes para buscar");
             return;
@@ -158,6 +163,7 @@ public class Funciones {
 
     public static void listarClientes (){
         System.out.println("\n --LISTADO DE CLIENTES--");
+
         if (GestorTiendaVinos.clientes.isEmpty()){
             System.out.println("No hay clientes para buscar");
             return;
@@ -179,6 +185,7 @@ public class Funciones {
             System.out.println("3. Busqueda por tipo");
             System.out.println("4. Modificación de precio");
             System.out.println("5. Listado de productos");
+            System.out.println("6. Volver al menu principal");
             System.out.println("-- Elige una opción valida");
             opcion=obtenerOpcionMenu();
 
@@ -188,17 +195,19 @@ public class Funciones {
                 case 3: busquedaProducto ();break;
                 case 4: modificarPrecioProducto ();break;
                 case 5: listadoProducto ();break;
-                case 6: break;
+                case 6: menuPrincipal();break;
             }
-        }while (opcion !=5);
+        }while (opcion !=6);
     }
 
     public static void altaProducto () {
         System.out.println("\n-- ALTA DE VINO--");
+
         System.out.println("ingrese el nombre del vino");
         String nombre = sc.nextLine();
         System.out.println("Ingresa el tipo de vino (blanco,tinto,rosado,espumoso");
         String tipo = sc.nextLine();
+
         System.out.println("Ingresa el precio");
         double precio = 0;
         try {
@@ -207,6 +216,7 @@ public class Funciones {
         } catch (InputMismatchException e) {
             System.out.println("Por favor introduce un numero");
         }
+
         System.out.println("Ingresa la cantidad");
         int cantidad = 0;
         try {
@@ -225,6 +235,8 @@ public class Funciones {
     public static  void listadoProducto (){
         for (int i = 0; i < GestorTiendaVinos.vinos.size(); i++) {
             System.out.println((i+1) + "." + GestorTiendaVinos.vinos.get(i));
+        }if (GestorTiendaVinos.vinos.isEmpty()){
+            System.out.println("Error no hay ningun vino para mostrar");
         }
     }
 
@@ -234,6 +246,7 @@ public class Funciones {
             System.out.println("No hay vino para eliminar");
             return;
         }
+
         listadoProducto();
         System.out.println("Ingresa el nombre exacto del vino a dar de baja");
         String nombreVino = sc.nextLine();
@@ -297,7 +310,7 @@ public class Funciones {
         try {
             String iputTeclado = sc.nextLine();
             double nuevoPrecio = Double.parseDouble(iputTeclado);
-            sc.nextLine();
+
 
             if (nuevoPrecio == -1){
                 System.out.println("Precio no modificado");
@@ -305,7 +318,7 @@ public class Funciones {
                 System.out.println("El precio no puede ser negativo. No se ha realizado ningun cambio");
             }else{
                 vinoAModificar.setPrecio(nuevoPrecio);
-                System.out.println("Precio del vino " + vinoAModificar.getNombre() + "actualizado a: "  + nuevoPrecio + "€");
+                System.out.println("Precio del vino " + vinoAModificar.getNombre() + " actualizado a: "  + nuevoPrecio + "€");
             }
         }catch (NumberFormatException e){
             System.out.println("Error el precio tiene que ser un valor numerico.");
@@ -340,8 +353,13 @@ public class Funciones {
 
     public static void realizarVenta () {
         System.out.println("\n--REALIZAR UNA VENTA--");
-        if (GestorTiendaVinos.vinos.isEmpty() || GestorTiendaVinos.clientes.isEmpty()){
-            System.out.println("No hay clientes o vinos para poder realizar una venta");
+        if (GestorTiendaVinos.clientes.isEmpty()){
+            System.out.println("Error no hay cliente registrado");
+            return;
+        }
+        if (GestorTiendaVinos.vinos.isEmpty()){
+            System.out.println("Error, no hay vinos registrados para vender");
+        }
 
             System.out.println("Selecciona un cliente para realizar una venta");
             listarClientes();
@@ -397,7 +415,7 @@ public class Funciones {
                 }
             }
 
-        }
+
     }
 
     public static void mostrarVentas (){
@@ -432,12 +450,30 @@ public class Funciones {
         if (clienteABuscar != null){
             boolean tieneVentas = false;
             System.out.println("\n Ventas de. " + clienteABuscar.getNombre());
-            for (Pedido pe : GestorTiendaVinos.pedidos){
-                
+            for (Pedido pedido : GestorTiendaVinos.pedidos){
+                if (pedido.getCliente().getDni().equalsIgnoreCase(dni)){
+                    System.out.println(pedido);
+                    tieneVentas=true;
+                }
+            }if (!tieneVentas){
+                System.out.println("El cliente " + clienteABuscar.getNombre() + "no tiene ventas realizadas");
             }
+        }else {
+            System.out.println("Error, cliente no encontrado con dni " + dni);
         }
 
+    }
 
+    public static void mostrarImporteVentas (){
+        System.out.println("\n -- IMPORTE TOTAL DE CADA VENTA--");
+
+        if(GestorTiendaVinos.pedidos.isEmpty()){
+            System.out.println("Error no se ha realizado ninguna venta");
+            return;
+        }
+        for (Pedido pedido : GestorTiendaVinos.pedidos){
+            System.out.println("Venta de " + pedido.getCliente().getNombre() + " en "  + pedido.getFecha() + ": " + String.format("%.2f",pedido.getTotalVenta()) + "€");
+        }
     }
 
 }
