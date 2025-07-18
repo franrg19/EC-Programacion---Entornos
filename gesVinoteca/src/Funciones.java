@@ -1,10 +1,31 @@
+import javax.xml.transform.Source;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+/**
+ * Clase Funciones que contiene todos los métodos estáticos relacionados con
+ * la gestión de clientes, vinos y pedidos para una tienda de vinos.
+ * Utiliza la clase GestorTiendaVinos como fuente de datos central.
+ *
+ * Esta clase incluye lógica para:
+ * - Cargar datos de prueba.
+ * - Mostrar menús.
+ * - Manejar clientes (alta, baja, modificación, búsqueda, listado).
+ * - Manejar vinos (alta, baja, modificación, búsqueda, listado).
+ * - Gestionar ventas (realizar, mostrar por cliente, mostrar importes).
+ *
+ * Autor: Fran Rebollo
+ */
+
 
 public class Funciones {
     static Scanner sc = new Scanner(System.in);
 
-    //PRECARGAR DATOS DE PRUEBA
+    /**
+     * Precarga algunos clientes y vinos en el sistema para realizar pruebas.
+     * También muestra por consola los clientes y vinos cargados.
+     */
+
     public static void precargarDatos (){
         GestorTiendaVinos.clientes.add(new Cliente("Fran Rebollo","fran@email.com","654987321","76751415s"));
         GestorTiendaVinos.clientes.add(new Cliente("Adrian Lopez","adrian@email.com","636456987","76645623F"));
@@ -24,7 +45,9 @@ public class Funciones {
         }
     }
 
-    // MENU PRINCIPAL
+    /**
+     * Muestra el menú principal de la aplicación por consola.
+     */
     public static void menuPrincipal (){
         System.out.println("--- MENU PRINCIPAL DE LA APP ---");
         System.out.println("1.Gestión de clientes");
@@ -34,7 +57,13 @@ public class Funciones {
         System.out.println("Tienes que elegir una opción");
     }
 
-    //METO-DO CON MANEJO DE EXCEPCIONES PARA OBTENER ENTRADA USUARIO DEL MENU
+    /**
+     * Solicita al usuario una opción del menú y maneja posibles errores de entrada.
+     *
+     * @return La opción seleccionada como entero, o -1 si hubo error.
+     */
+
+
     public static int obtenerOpcionMenu (){
         int opcion = -1;
         try {
@@ -46,7 +75,13 @@ public class Funciones {
         }return opcion;
     }
 
-    //GESTIÓN DE CLIENTES
+
+    /**
+     * Muestra el menú de gestión de clientes y ejecuta la acción correspondiente
+     * según la opción seleccionada.
+     */
+
+
     public static void gestionClientes (){
         int opcion;
         do {
@@ -72,6 +107,10 @@ public class Funciones {
 
     }
 
+    /**
+     * Solicita datos al usuario y da de alta un nuevo cliente en la lista.
+     */
+
     public static void altaCliente (){
         System.out.println("\n --ALTA DE CLIENTE--");
 
@@ -88,6 +127,13 @@ public class Funciones {
         System.out.println("¡ Cliente añadido con exito !");
     }
 
+    /**
+     * Busca un cliente por su DNI en la lista de clientes.
+     *
+     * @param dni DNI del cliente a buscar.
+     * @return Objeto Cliente si lo encuentra, o null si no.
+     */
+
     public static Cliente buscarCliente (String dni){
         for (Cliente c : GestorTiendaVinos.clientes){
             if (c.getDni().equalsIgnoreCase(dni)){
@@ -95,6 +141,10 @@ public class Funciones {
             }
         }return null;
     }
+
+    /**
+     * Elimina un cliente de la lista según su DNI.
+     */
 
     public static void bajaCliente (){
         System.out.println("\n --BAJA DE CLIENTE--");
@@ -113,6 +163,10 @@ public class Funciones {
             System.out.println("Error: Cliente no encontrado con DNI: " + dni);
         }
     }
+
+    /**
+     * Permite modificar los datos de un cliente existente, dejando sin cambios los campos vacíos.
+     */
 
     public static void modificarCliente (){
         if (GestorTiendaVinos.clientes.isEmpty()){
@@ -149,6 +203,10 @@ public class Funciones {
 
     }
 
+    /**
+     * Solicita un DNI al usuario y muestra los datos del cliente si existe.
+     */
+
     public static void buscarClientePorDni (){
         System.out.println("\n --BUSQUEDA DE CLIENTE POR DNI--");
 
@@ -166,6 +224,10 @@ public class Funciones {
         }
     }
 
+    /**
+     * Muestra un listado de todos los clientes registrados.
+     */
+
     public static void listarClientes (){
         System.out.println("\n --LISTADO DE CLIENTES--");
 
@@ -178,9 +240,9 @@ public class Funciones {
         }
     }
 
-
-    //GESTION PRODUCTO VINO
-
+    /**
+     * Muestra el menú de gestión de vinos y ejecuta acciones como alta, baja, modificación o listado.
+     */
     public static void gestionVinos (){
         int opcion;
         do {
@@ -206,6 +268,10 @@ public class Funciones {
             }
         }while (opcion !=7);
     }
+
+    /**
+     * Da de alta un nuevo vino solicitando los datos al usuario.
+     */
 
     public static void altaProducto () {
         System.out.println("\n-- ALTA DE VINO--");
@@ -238,6 +304,9 @@ public class Funciones {
         System.out.println("¡Producto añadido con éxito");
     }
 
+    /**
+     * Muestra el listado de todos los vinos disponibles.
+     */
 
     public static  void listadoProducto (){
         if (GestorTiendaVinos.vinos.isEmpty()){
@@ -249,6 +318,10 @@ public class Funciones {
             System.out.println((i+1) + ". " + GestorTiendaVinos.vinos.get(i));
         }
     }
+
+    /**
+     * Elimina un vino de la lista según su nombre exacto.
+     */
 
     public static void bajaProducto (){
         System.out.println("\n ---BAJA DE VINO---");
@@ -270,6 +343,12 @@ public class Funciones {
 
 
     }
+    /**
+     * Busca un vino por su nombre exacto (ignorando mayúsculas).
+     *
+     * @param nombre Nombre del vino.
+     * @return Objeto Vino si lo encuentra, o null si no.
+     */
 
     public static Vino buscarVinoPorNombreExacto (String nombre){
         for (Vino vino : GestorTiendaVinos.vinos) {
@@ -278,6 +357,10 @@ public class Funciones {
             };
         }return null;
     }
+
+    /**
+     * Realiza una búsqueda de vinos por nombre o tipo.
+     */
 
     public static void busquedaProducto (){
         if (GestorTiendaVinos.vinos.isEmpty()){
@@ -297,6 +380,10 @@ public class Funciones {
             System.out.println("no se encontraron vinos con el criterio de busqueda");
         }
     }
+
+    /**
+     * Permite modificar el precio de un vino existente introduciendo su nombre.
+     */
 
     public static void modificarPrecioProducto (){
         System.out.println("\n MODIFICAR PRECIO VINO");
@@ -335,6 +422,10 @@ public class Funciones {
         }
     }
 
+    /**
+     * Permite modificar el stock de un vino existente introduciendo su nombre.
+     */
+
     public static void modificarStockProducto () {
         System.out.println("\n MODIFICAR STOCK PRODUCTO");
         if (GestorTiendaVinos.vinos.isEmpty()){
@@ -372,8 +463,9 @@ public class Funciones {
 
     }
 
-    //GESTION DE VENTAS
-
+    /**
+     * Muestra el menú de gestión de pedidos (ventas) y ejecuta la acción correspondiente.
+     */
     public static void gestionPedidos (){
         int opcion = -1;
 
@@ -383,7 +475,8 @@ public class Funciones {
             System.out.println("2. Mostrar ventas realizadas");
             System.out.println("3. Mostrar ventas por cliente");
             System.out.println("4. Mostrar importe total de cada venta");
-            System.out.println("5. Salir");
+            System.out.println("5. Liquidación de todas las ventas");
+            System.out.println("6. Salir");
             opcion=obtenerOpcionMenu();
 
             switch (opcion){
@@ -391,12 +484,18 @@ public class Funciones {
                 case 2: mostrarVentas ();break;
                 case 3: mostrarVentasCliente ();break;
                 case 4: mostrarImporteVentas ();break;
-                case 5: return;
+                case 5: liquidacionVentas ();break;
+                case 6: return;
                 default:
                     System.out.println("Opcion no valida, intentelo de nuevo");
             }
-        }while (opcion!=5);
+        }while (opcion!=6);
     }
+
+    /**
+     * Permite realizar una nueva venta seleccionando un cliente y productos con cantidades.
+     * Verifica el stock y actualiza la cantidad disponible.
+     */
 
     public static void realizarVenta () {
         System.out.println("\n--REALIZAR UNA VENTA--");
@@ -466,6 +565,9 @@ public class Funciones {
 
     }
 
+    /**
+     * Muestra todas las ventas realizadas hasta el momento.
+     */
     public static void mostrarVentas (){
         System.out.println("\n --TODAS LAS VENTAS REALIZADAS--");
 
@@ -479,6 +581,9 @@ public class Funciones {
         }
     }
 
+    /**
+     * Muestra todas las ventas realizadas por un cliente específico introduciendo su DNI.
+     */
     public static void mostrarVentasCliente (){
         System.out.println("\n--VENTAS POR CLIENTE--");
         if (GestorTiendaVinos.clientes.isEmpty()){
@@ -512,6 +617,10 @@ public class Funciones {
 
     }
 
+    /**
+     * Muestra el importe total de cada venta registrada en el sistema.
+     */
+
     public static void mostrarImporteVentas (){
         System.out.println("\n -- IMPORTE TOTAL DE CADA VENTA--");
 
@@ -522,6 +631,25 @@ public class Funciones {
         for (Pedido pedido : GestorTiendaVinos.pedidos){
             System.out.println("Venta de " + pedido.getCliente().getNombre() + " en "  + pedido.getFecha() + ": " + String.format("%.2f",pedido.getTotalVenta()) + "€");
         }
+    }
+
+    /**
+     * Muestra la liquidación total: suma del importe de todas las ventas realizadas hasta ahora.
+     */
+    public static void liquidacionVentas (){
+        System.out.println("---LIQUIDACION DE VENTAS TOTALES ---");
+
+        if (GestorTiendaVinos.pedidos.isEmpty()){
+            System.out.println("Error no se ha realizado ninguna venta");
+            return;
+        }
+
+        double totalVentas =0;
+        for (Pedido p : GestorTiendaVinos.pedidos){
+            totalVentas +=p.getTotalVenta();
+        }
+        System.out.println("La liquidación total de las ventas es: " + String.format("%.2f",totalVentas) + "€");
+
     }
 
 }
